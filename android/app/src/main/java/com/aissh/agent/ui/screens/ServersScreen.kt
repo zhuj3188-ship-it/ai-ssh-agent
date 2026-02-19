@@ -4,19 +4,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.aissh.agent.R
+import com.aissh.agent.ui.components.ServerCard
 import com.aissh.agent.viewmodel.ServerViewModel
 
 @Composable
@@ -34,27 +33,10 @@ fun ServersScreen(vm: ServerViewModel = hiltViewModel()) {
                 }
             }
         }
-
         if (state.isLoading) LinearProgressIndicator(Modifier.fillMaxWidth(), color = cs.primary)
-
         LazyColumn(contentPadding = PaddingValues(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             items(state.servers, key = { it.name }) { server ->
-                Card(colors = CardDefaults.cardColors(containerColor = cs.surfaceVariant), shape = RoundedCornerShape(16.dp)) {
-                    Row(Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Icon(Icons.Default.Dns, null, tint = cs.primary, modifier = Modifier.size(28.dp))
-                        Column(Modifier.weight(1f)) {
-                            Text(server.name, fontSize = 15.sp, color = cs.onSurface)
-                            Text("${server.username}@${server.host}:${server.port}", fontSize = 12.sp, color = cs.onSurfaceVariant)
-                        }
-                        FilledTonalButton(onClick = { vm.testConnection(server.name) },
-                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)) {
-                            Icon(Icons.Default.NetworkCheck, null, modifier = Modifier.size(16.dp))
-                            Spacer(Modifier.width(4.dp))
-                            Text(stringResource(R.string.test), fontSize = 12.sp)
-                        }
-                    }
-                }
+                ServerCard(server = server, onTest = { vm.testConnection(server.name) })
             }
             if (state.servers.isEmpty() && !state.isLoading) {
                 item {

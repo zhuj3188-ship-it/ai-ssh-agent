@@ -1,10 +1,10 @@
 package com.aissh.agent.ui.screens
 
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -37,16 +37,11 @@ class QuotaViewModel @Inject constructor(private val api: ApiService) : ViewMode
     private val _state = MutableStateFlow(QuotaState())
     val state = _state.asStateFlow()
     init { refresh() }
-    fun refresh() {
-        viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
-            try {
-                _state.update { it.copy(quotas = api.getQuota().quotas, isLoading = false) }
-            } catch (e: Exception) {
-                _state.update { it.copy(isLoading = false, error = e.message) }
-            }
-        }
-    }
+    fun refresh() { viewModelScope.launch {
+        _state.update { it.copy(isLoading = true, error = null) }
+        try { _state.update { it.copy(quotas = api.getQuota().quotas, isLoading = false) } }
+        catch (e: Exception) { _state.update { it.copy(isLoading = false, error = e.message) } }
+    }}
 }
 
 @Composable
@@ -54,7 +49,6 @@ fun QuotaScreen(vm: QuotaViewModel = hiltViewModel()) {
     val state by vm.state.collectAsState()
     val cs = MaterialTheme.colorScheme
     val colors = listOf(Color(0xFF6C5CE7), Color(0xFF00B894), Color(0xFFE17055), Color(0xFF0984E3), Color(0xFFFDCB6E), Color(0xFFE84393))
-
     val totalTokens = state.quotas.sumOf { it.tokens_in + it.tokens_out }
     val totalCost = state.quotas.sumOf { it.cost_usd }
 
@@ -68,11 +62,8 @@ fun QuotaScreen(vm: QuotaViewModel = hiltViewModel()) {
                 }
             }
         }
-
-        if (state.isLoading) { LinearProgressIndicator(Modifier.fillMaxWidth(), color = cs.primary) }
-
+        if (state.isLoading) LinearProgressIndicator(Modifier.fillMaxWidth(), color = cs.primary)
         LazyColumn(contentPadding = PaddingValues(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            // Summary cards
             item {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     Card(Modifier.weight(1f), colors = CardDefaults.cardColors(containerColor = cs.surfaceVariant), shape = RoundedCornerShape(16.dp)) {
@@ -93,14 +84,11 @@ fun QuotaScreen(vm: QuotaViewModel = hiltViewModel()) {
                     }
                 }
             }
-
-            // Per provider
             itemsIndexed(state.quotas) { i, q ->
                 val c = colors[i % colors.size]
                 Card(colors = CardDefaults.cardColors(containerColor = cs.surfaceVariant), shape = RoundedCornerShape(16.dp)) {
                     Column(Modifier.padding(16.dp)) {
-                        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween) {
+                        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
                             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Box(Modifier.size(10.dp).clip(CircleShape).background(c))
                                 Text(q.provider, fontSize = 15.sp, color = cs.onSurface)
@@ -127,7 +115,6 @@ fun QuotaScreen(vm: QuotaViewModel = hiltViewModel()) {
                     }
                 }
             }
-
             if (state.quotas.isEmpty() && !state.isLoading) {
                 item {
                     Column(Modifier.fillMaxWidth().padding(40.dp), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -136,10 +123,6 @@ fun QuotaScreen(vm: QuotaViewModel = hiltViewModel()) {
                         Text(stringResource(R.string.no_quota), color = cs.onSurfaceVariant)
                     }
                 }
-            }
-
-            state.error?.let { err ->
-                item { Text(err, color = cs.error, fontSize = 12.sp, modifier = Modifier.padding(8.dp)) }
             }
         }
     }

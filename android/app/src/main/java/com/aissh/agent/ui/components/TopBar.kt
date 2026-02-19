@@ -10,8 +10,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun AppTopBar(title: String) {
     val cs = MaterialTheme.colorScheme
-    Surface(color = cs.surface, shadowElevation = 2.dp) {
-        Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp)) {
+    Surface(color = cs.surface, shadowElevation = 1.dp) {
+        Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp)) {
             Text(title, fontSize = 18.sp, color = cs.onSurface)
         }
     }

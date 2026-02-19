@@ -47,14 +47,11 @@ object AppModule {
         }
         val sslContext = SSLContext.getInstance("TLS")
         sslContext.init(null, arrayOf<TrustManager>(trustAll), SecureRandom())
-
         return OkHttpClient.Builder()
             .sslSocketFactory(sslContext.socketFactory, trustAll)
             .hostnameVerifier { _, _ -> true }
             .addInterceptor(auth)
-            .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BASIC
-            })
+            .addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC })
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)

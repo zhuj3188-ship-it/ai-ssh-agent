@@ -1,34 +1,33 @@
 package com.aissh.agent.ui.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aissh.agent.data.local.entity.ServerEntity
-import com.aissh.agent.ui.theme.*
+import com.aissh.agent.data.remote.ServerInfo
 
 @Composable
-fun ServerCard(server: ServerEntity, onTest: () -> Unit) {
-    val shape = RoundedCornerShape(14.dp)
-    Row(Modifier.fillMaxWidth().clip(shape)
-        .background(Brush.linearGradient(listOf(CardDark, SurfaceDark)))
-        .border(1.dp, CyanPrimary.copy(alpha = 0.2f), shape).padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically) {
-        Box(Modifier.size(10.dp).clip(CircleShape).background(if (server.isConnected) EmeraldPrimary else DangerRed))
-        Spacer(Modifier.width(12.dp))
-        Column(Modifier.weight(1f)) {
-            Text(server.name, color = Ivory, fontSize = 16.sp)
-            Text("${server.host}:${server.port}", color = MutedGray, fontSize = 12.sp)
-            if (server.latencyMs > 0) Text("${server.latencyMs}ms", color = EmeraldPrimary, fontSize = 11.sp)
+fun ServerCard(server: ServerInfo, onTest: () -> Unit) {
+    val cs = MaterialTheme.colorScheme
+    Card(colors = CardDefaults.cardColors(containerColor = cs.surfaceVariant), shape = RoundedCornerShape(16.dp)) {
+        Row(Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Icon(Icons.Default.Dns, null, tint = cs.primary, modifier = Modifier.size(28.dp))
+            Column(Modifier.weight(1f)) {
+                Text(server.name, fontSize = 15.sp, color = cs.onSurface)
+                Text("${server.username}@${server.host}:${server.port}", fontSize = 12.sp, color = cs.onSurfaceVariant)
+            }
+            FilledTonalButton(onClick = onTest, contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)) {
+                Icon(Icons.Default.NetworkCheck, null, modifier = Modifier.size(16.dp))
+                Spacer(Modifier.width(4.dp))
+                Text("Test", fontSize = 12.sp)
+            }
         }
     }
 }

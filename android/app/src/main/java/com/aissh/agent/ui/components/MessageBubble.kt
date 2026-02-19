@@ -3,9 +3,9 @@ package com.aissh.agent.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
@@ -24,13 +24,5 @@ fun MessageBubble(content: String, isUser: Boolean) {
             .padding(12.dp)) {
             Text(content, color = if (isUser) cs.onPrimary else cs.onSurface, fontSize = 14.sp, lineHeight = 20.sp)
         }
-    }
-}
-
-@Composable
-fun MessageShimmer() {
-    Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 3.dp)) {
-        Box(Modifier.width(200.dp).height(40.dp).clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant))
     }
 }
