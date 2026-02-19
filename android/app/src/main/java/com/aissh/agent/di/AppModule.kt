@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
+import com.aissh.agent.BuildConfig
 import com.aissh.agent.data.local.AppDatabase
 import com.aissh.agent.data.remote.ApiService
 import com.aissh.agent.data.remote.AuthInterceptor
@@ -25,6 +26,8 @@ private val Context.dataStore by preferencesDataStore(name = "settings")
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+    private const val BASE_URL = "http://43.139.24.49:8080/"
+
     @Provides @Singleton
     fun provideDataStore(@ApplicationContext ctx: Context): DataStore<Preferences> = ctx.dataStore
 
@@ -32,15 +35,23 @@ object AppModule {
     fun provideAuthInterceptor(dataStore: DataStore<Preferences>): AuthInterceptor = AuthInterceptor(dataStore)
 
     @Provides @Singleton
-    fun provideOkHttp(auth: AuthInterceptor): OkHttpClient =
-        OkHttpClient.Builder()
+    fun provideOkHttp(auth: AuthInterceptor): OkHttpClient {
+        val builder = OkHttpClient.Builder()
             .addInterceptor(auth)
-            .addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY })
-            .connectTimeout(30, TimeUnit.SECONDS).readTimeout(60, TimeUnit.SECONDS).build()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+        if (BuildConfig.DEBUG) {
+            builder.addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
+        }
+        return builder.build()
+    }
 
     @Provides @Singleton
     fun provideRetrofit(client: OkHttpClient): Retrofit =
-        Retrofit.Builder().baseUrl("http://43.139.24.49:8080/").client(client)
+        Retrofit.Builder().baseUrl(BASE_URL).client(client)
             .addConverterFactory(GsonConverterFactory.create()).build()
 
     @Provides @Singleton
@@ -48,7 +59,8 @@ object AppModule {
 
     @Provides @Singleton
     fun provideDatabase(@ApplicationContext ctx: Context): AppDatabase =
-        Room.databaseBuilder(ctx, AppDatabase::class.java, "aissh.db").fallbackToDestructiveMigration().build()
+        Room.databaseBuilder(ctx, AppDatabase::class.java, "aissh.db")
+            .fallbackToDestructiveMigration().build()
 
     @Provides @Singleton fun provideMessageDao(db: AppDatabase) = db.messageDao()
     @Provides @Singleton fun provideServerDao(db: AppDatabase) = db.serverDao()

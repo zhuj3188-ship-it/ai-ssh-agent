@@ -1,7 +1,7 @@
 server:
   host: "0.0.0.0"
   port: 8000
-  cors_origins: ["*"]
+  cors_origins: ["http://43.139.24.49:8080", "http://localhost:8080"]
   session_timeout: 3600
 
 ai:
@@ -44,18 +44,6 @@ ssh:
   temp_key_ttl: 3600
   default_timeout: 30
   max_concurrent: 10
-  servers:
-    production:
-      host: "192.168.1.100"
-      port: 22
-      username: "deploy"
-      auth_method: "key"
-      key_file: "/var/ssh-keys/prod_key"
-    staging:
-      host: "192.168.1.101"
-      port: 22
-      username: "deploy"
-      auth_method: "password"
 
 safety:
   blocked_commands:
@@ -66,6 +54,11 @@ safety:
     - ":(){ :|:& };:"
     - "> /dev/sda"
     - "chmod -R 777 /"
+    - "curl|sh"
+    - "wget|bash"
+    - "python -c"
+    - "nc -e"
+    - "ncat -e"
   require_confirmation:
     - "rm "
     - "reboot"
@@ -75,7 +68,14 @@ safety:
     - "kill -9"
     - "drop database"
     - "truncate"
+    - "iptables"
+    - "useradd"
+    - "userdel"
+    - "passwd"
   max_command_length: 2000
+  rate_limit:
+    max_commands_per_minute: 30
+    max_commands_per_hour: 300
 
 workspace:
   base_dir: "/var/workspace"

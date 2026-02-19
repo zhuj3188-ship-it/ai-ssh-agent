@@ -27,8 +27,7 @@ jobs:
 
       - name: Generate Gradle Wrapper
         working-directory: android
-        run: |
-          gradle wrapper
+        run: gradle wrapper
 
       - name: Build Debug APK
         working-directory: android

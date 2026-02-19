@@ -7,7 +7,8 @@
         android:allowBackup="false"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AiSshAgent">
+        android:theme="@style/Theme.AiSshAgent"
+        android:networkSecurityConfig="@xml/network_security_config">
         <activity android:name=".MainActivity" android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
