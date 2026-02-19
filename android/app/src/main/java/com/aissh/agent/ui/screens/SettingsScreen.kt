@@ -99,7 +99,7 @@ fun SettingsScreen(vm: SettingsViewModel = hiltViewModel(), onLogout: () -> Unit
                     Switch(checked = state.darkMode, onCheckedChange = { vm.setDarkMode(it) },
                         colors = SwitchDefaults.colors(checkedTrackColor = cs.primary, checkedThumbColor = cs.onPrimary))
                 }
-                Divider(color = cs.outline.copy(alpha = 0.2f))
+                HorizontalDivider(color = cs.outline.copy(alpha = 0.2f))
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Icon(Icons.Default.Language, contentDescription = null, tint = cs.primary, modifier = Modifier.size(20.dp))
                     Text(stringResource(R.string.language), color = cs.onSurface, fontSize = 14.sp)

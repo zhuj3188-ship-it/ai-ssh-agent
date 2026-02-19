@@ -1,6 +1,5 @@
 package com.aissh.agent.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 
@@ -26,8 +25,6 @@ private val LightColorScheme = lightColorScheme(
 fun AiSshTheme(darkTheme: Boolean = true, content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme,
-        typography = Typography,
-        shapes = Shapes,
         content = content
     )
 }
