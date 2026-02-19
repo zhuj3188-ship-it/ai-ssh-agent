@@ -11,7 +11,7 @@ import javax.inject.Singleton
 
 @Singleton
 class ChatRepository @Inject constructor(private val api: ApiService, private val messageDao: MessageDao) {
-    fun getMessages(sessionId: String): Flow<List<MessageEntity>> = messageDao.getBySession(sessionId)
+    fun getMessages(sessionId: String): Flow<List<MessageEntity>> = messageDao.getMessages(sessionId)
     fun getAllSessions(): Flow<List<String>> = messageDao.getAllSessions()
 
     suspend fun sendMessage(text: String, provider: String? = null, sessionId: String = "default"): ChatResponse {
@@ -21,6 +21,6 @@ class ChatRepository @Inject constructor(private val api: ApiService, private va
             provider = resp.provider, model = resp.model, tokensUsed = resp.tokens_in + resp.tokens_out))
         return resp
     }
-    suspend fun clearSession(sessionId: String) = messageDao.clearSession(sessionId)
+    suspend fun clearSession(sessionId: String) = messageDao.deleteSession(sessionId)
     suspend fun clearAll() = messageDao.clearAll()
 }
