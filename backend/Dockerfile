@@ -15,4 +15,4 @@ RUN mkdir -p /var/ssh-keys /var/workspace && chmod 700 /var/ssh-keys
 
 EXPOSE 8000
 
-CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]

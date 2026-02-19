@@ -28,7 +28,7 @@ brain = AIBrain(config)
 async def lifespan(application):
     logger.info("Initializing database...")
     await init_db()
-    logger.info("AI SSH Agent v4.0 started")
+    logger.info("AI SSH Agent v5.0 started")
     yield
     brain.ssh.close_all()
     logger.info("Shutdown complete")
@@ -37,4 +37,4 @@ async def lifespan(application):
 app.router.lifespan_context = lifespan
 
 if __name__ == "__main__":
-    uvicorn.run("server:app", host="0.0.0.0", port=8000, reload=False, workers=2)
+    uvicorn.run("server:app", host="0.0.0.0", port=8000, reload=False)
