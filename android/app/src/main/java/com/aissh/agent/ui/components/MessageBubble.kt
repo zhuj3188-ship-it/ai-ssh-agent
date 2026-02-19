@@ -26,3 +26,10 @@ fun MessageBubble(content: String, isUser: Boolean) {
         }
     }
 }
+
+@Composable
+fun MessageShimmer() {
+    Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        ShimmerBlock(260.dp); ShimmerBlock(200.dp); ShimmerBlock(140.dp)
+    }
+}

@@ -12,7 +12,7 @@ interface MessageDao {
     @Query("SELECT * FROM messages WHERE sessionId = :sessionId ORDER BY timestamp ASC")
     fun getMessages(sessionId: String): Flow<List<MessageEntity>>
 
-    @Query("SELECT DISTINCT sessionId FROM messages ORDER BY timestamp DESC")
+    @Query("SELECT DISTINCT sessionId FROM messages")
     fun getAllSessions(): Flow<List<String>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -24,10 +24,3 @@ fun ShimmerBlock(width: Dp = 200.dp, height: Dp = 14.dp) {
         Brush.linearGradient(listOf(cs.surfaceVariant, cs.surface, cs.surfaceVariant),
             start = Offset(offset, 0f), end = Offset(offset + 400f, 0f))))
 }
-
-@Composable
-fun MessageShimmer() {
-    Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        ShimmerBlock(260.dp); ShimmerBlock(200.dp); ShimmerBlock(140.dp)
-    }
-}
