@@ -1,24 +1,18 @@
 package com.aissh.agent.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.aissh.agent.ui.theme.*
+import androidx.compose.ui.unit.sp
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppTopBar(title: String, connectionState: String = "connected") {
-    TopAppBar(title = {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(title, color = Ivory)
-            Spacer(Modifier.width(8.dp))
-            val color = when (connectionState) { "connected" -> EmeraldPrimary; "connecting" -> WarningAmber; else -> DangerRed }
-            Box(Modifier.size(8.dp).background(color, shape = CircleShape))
+fun AppTopBar(title: String) {
+    val cs = MaterialTheme.colorScheme
+    Surface(color = cs.surface, shadowElevation = 2.dp) {
+        Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp)) {
+            Text(title, fontSize = 18.sp, color = cs.onSurface)
         }
-    }, colors = TopAppBarDefaults.topAppBarColors(containerColor = SurfaceDark))
+    }
 }

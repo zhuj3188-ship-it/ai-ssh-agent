@@ -14,5 +14,8 @@
     <string name="dark_mode">Dark Mode</string>
     <string name="proxy_settings">Proxy Settings</string>
     <string name="logout">Logout</string>
-    <string name="no_messages">No messages yet</string>
+    <string name="no_messages">Start a conversation with AI</string>
+    <string name="ai_provider">AI Provider</string>
+    <string name="api_key">API Key</string>
+    <string name="api_key_hint">Enter your API key</string>
 </resources>

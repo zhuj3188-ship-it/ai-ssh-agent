@@ -13,6 +13,7 @@ import com.aissh.agent.R
 import com.aissh.agent.ui.screens.*
 import com.aissh.agent.ui.theme.*
 import com.aissh.agent.viewmodel.AuthViewModel
+import com.aissh.agent.viewmodel.SettingsViewModel
 
 sealed class Screen(val route: String, val labelRes: Int, val icon: androidx.compose.ui.graphics.vector.ImageVector) {
     object Chat : Screen("chat", R.string.chat, Icons.Default.Chat)
@@ -24,31 +25,37 @@ sealed class Screen(val route: String, val labelRes: Int, val icon: androidx.com
 @Composable
 fun AppNavigation() {
     val authVm: AuthViewModel = hiltViewModel()
+    val settingsVm: SettingsViewModel = hiltViewModel()
     val authState by authVm.state.collectAsState()
-    if (!authState.isLoggedIn) { LoginScreen(authVm); return }
+    val settingsState by settingsVm.state.collectAsState()
 
-    val navController = rememberNavController()
-    val screens = listOf(Screen.Chat, Screen.Servers, Screen.Quota, Screen.Settings)
-    val navBackStack by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStack?.destination?.route
+    AiSshTheme(darkTheme = settingsState.darkMode) {
+        if (!authState.isLoggedIn) { LoginScreen(authVm); return@AiSshTheme }
 
-    Scaffold(bottomBar = {
-        NavigationBar(containerColor = SurfaceDark) {
-            screens.forEach { screen ->
-                NavigationBarItem(selected = currentRoute == screen.route,
-                    onClick = { navController.navigate(screen.route) { popUpTo(navController.graph.startDestinationId) { saveState = true }; launchSingleTop = true; restoreState = true } },
-                    icon = { Icon(screen.icon, contentDescription = null) },
-                    label = { Text(stringResource(screen.labelRes)) },
-                    colors = NavigationBarItemDefaults.colors(selectedIconColor = CyanPrimary, selectedTextColor = CyanPrimary,
-                        indicatorColor = CyanPrimary.copy(alpha = 0.15f), unselectedIconColor = MutedGray, unselectedTextColor = MutedGray))
+        val navController = rememberNavController()
+        val screens = listOf(Screen.Chat, Screen.Servers, Screen.Quota, Screen.Settings)
+        val navBackStack by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStack?.destination?.route
+        val cs = MaterialTheme.colorScheme
+
+        Scaffold(bottomBar = {
+            NavigationBar(containerColor = cs.surface) {
+                screens.forEach { screen ->
+                    NavigationBarItem(selected = currentRoute == screen.route,
+                        onClick = { navController.navigate(screen.route) { popUpTo(navController.graph.startDestinationId) { saveState = true }; launchSingleTop = true; restoreState = true } },
+                        icon = { Icon(screen.icon, contentDescription = null) },
+                        label = { Text(stringResource(screen.labelRes)) },
+                        colors = NavigationBarItemDefaults.colors(selectedIconColor = cs.primary, selectedTextColor = cs.primary,
+                            indicatorColor = cs.primary.copy(alpha = 0.12f), unselectedIconColor = cs.onSurfaceVariant, unselectedTextColor = cs.onSurfaceVariant))
+                }
             }
-        }
-    }) { padding ->
-        NavHost(navController, startDestination = Screen.Chat.route, Modifier.padding(padding)) {
-            composable(Screen.Chat.route) { ChatScreen() }
-            composable(Screen.Servers.route) { ServersScreen() }
-            composable(Screen.Quota.route) { QuotaScreen() }
-            composable(Screen.Settings.route) { SettingsScreen(onLogout = { authVm.logout() }) }
+        }) { padding ->
+            NavHost(navController, startDestination = Screen.Chat.route, Modifier.padding(padding)) {
+                composable(Screen.Chat.route) { ChatScreen() }
+                composable(Screen.Servers.route) { ServersScreen() }
+                composable(Screen.Quota.route) { QuotaScreen() }
+                composable(Screen.Settings.route) { SettingsScreen(onLogout = { authVm.logout() }) }
+            }
         }
     }
 }

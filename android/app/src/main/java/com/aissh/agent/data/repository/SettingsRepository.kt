@@ -16,15 +16,17 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
         val DARK_MODE = booleanPreferencesKey("dark_mode")
         val LANGUAGE = stringPreferencesKey("language")
         val PROVIDER = stringPreferencesKey("provider")
+        val API_KEYS = stringPreferencesKey("api_keys")
         val PROXY_ENABLED = booleanPreferencesKey("proxy_enabled")
         val PROXY_HOST = stringPreferencesKey("proxy_host")
         val PROXY_PORT = stringPreferencesKey("proxy_port")
         val PROXY_TYPE = stringPreferencesKey("proxy_type")
     }
-    val serverUrl = dataStore.data.map { it[SERVER_URL] ?: "http://10.0.2.2:8000/" }
+    val serverUrl = dataStore.data.map { it[SERVER_URL] ?: "http://43.139.24.49:8080/" }
     val darkMode = dataStore.data.map { it[DARK_MODE] ?: true }
     val language = dataStore.data.map { it[LANGUAGE] ?: "zh" }
     val provider = dataStore.data.map { it[PROVIDER] ?: "anthropic" }
+    val apiKeys = dataStore.data.map { it[API_KEYS] ?: "" }
     val proxyEnabled = dataStore.data.map { it[PROXY_ENABLED] ?: false }
     val proxyHost = dataStore.data.map { it[PROXY_HOST] ?: "" }
     val proxyPort = dataStore.data.map { it[PROXY_PORT] ?: "" }
@@ -34,6 +36,7 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
     suspend fun setDarkMode(on: Boolean) = dataStore.edit { it[DARK_MODE] = on }
     suspend fun setLanguage(lang: String) = dataStore.edit { it[LANGUAGE] = lang }
     suspend fun setProvider(p: String) = dataStore.edit { it[PROVIDER] = p }
+    suspend fun setApiKeys(keys: String) = dataStore.edit { it[API_KEYS] = keys }
     suspend fun setProxy(enabled: Boolean, host: String, port: String, type: String) {
         dataStore.edit { it[PROXY_ENABLED] = enabled; it[PROXY_HOST] = host; it[PROXY_PORT] = port; it[PROXY_TYPE] = type }
     }

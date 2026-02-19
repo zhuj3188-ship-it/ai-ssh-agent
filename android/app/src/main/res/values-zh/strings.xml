@@ -14,5 +14,8 @@
     <string name="dark_mode">深色模式</string>
     <string name="proxy_settings">代理设置</string>
     <string name="logout">退出登录</string>
-    <string name="no_messages">暂无消息</string>
+    <string name="no_messages">开始与 AI 对话</string>
+    <string name="ai_provider">AI 服务商</string>
+    <string name="api_key">API 密钥</string>
+    <string name="api_key_hint">输入你的 API 密钥</string>
 </resources>
