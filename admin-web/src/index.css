@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 14px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: #0a0a0f;
+  color: #ffffff;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* 淡入上滑 */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 淡入缩放 */
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* 从左滑入 */
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* 脉冲发光 */
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 5px rgba(0,180,255,0.1); }
+  50% { box-shadow: 0 0 20px rgba(0,180,255,0.2); }
+}
+
+/* 数字跳动 */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 柱状图上升 */
+@keyframes barGrow {
+  from { height: 0 !important; }
+}
+
+/* 闪烁 */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* 悬浮呼吸 */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.animate-fadeInUp { animation: fadeInUp 0.5s ease forwards; }
+.animate-fadeInScale { animation: fadeInScale 0.4s ease forwards; }
+.animate-slideInLeft { animation: slideInLeft 0.4s ease forwards; }
+.animate-pulseGlow { animation: pulseGlow 3s ease-in-out infinite; }
+.animate-countUp { animation: countUp 0.6s ease forwards; }
+.animate-barGrow { animation: barGrow 0.8s ease forwards; }
+.animate-float { animation: float 3s ease-in-out infinite; }
+
+.delay-1 { animation-delay: 0.1s; opacity: 0; }
+.delay-2 { animation-delay: 0.2s; opacity: 0; }
+.delay-3 { animation-delay: 0.3s; opacity: 0; }
+.delay-4 { animation-delay: 0.4s; opacity: 0; }
+.delay-5 { animation-delay: 0.5s; opacity: 0; }
+.delay-6 { animation-delay: 0.6s; opacity: 0; }
+
+/* 卡片悬停效果 */
+.hover-card {
+  transition: all 0.3s ease;
+}
+.hover-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0,180,255,0.2) !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+}
+
+/* 表格行悬停 */
+.hover-row {
+  transition: all 0.2s ease;
+}
+.hover-row:hover {
+  background: rgba(0,180,255,0.03) !important;
+}
+
+/* 按钮悬停 */
+.hover-btn {
+  transition: all 0.2s ease;
+}
+.hover-btn:hover {
+  transform: scale(1.02);
+}
+.hover-btn:active {
+  transform: scale(0.98);
+}
+
+/* 进度条动画 */
+@keyframes progressFill {
+  from { width: 0; }
+}
+.animate-progress { animation: progressFill 1s ease forwards; }
+
+/* 在线状态闪烁 */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.animate-blink { animation: blink 2s ease-in-out infinite; }
