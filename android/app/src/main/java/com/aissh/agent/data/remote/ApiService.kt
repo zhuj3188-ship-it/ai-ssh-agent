@@ -14,6 +14,9 @@ data class ServersResponse(val servers: List<ServerInfo>)
 data class ConnectionTest(val server: String, val connected: Boolean, val latency_ms: Int, val error: String?)
 data class QuotaItem(val provider: String, val model: String, val tokens_in: Long, val tokens_out: Long, val cost_usd: Double)
 data class QuotaResponse(val quotas: List<QuotaItem>)
+data class ValidateKeyRequest(val provider: String, val api_key: String, val base_url: String? = null)
+data class ValidateKeyResponse(val valid: Boolean, val error: String? = null, val model: String? = null, val provider: String? = null)
+data class ProvidersListResponse(val available: List<String>, val all: List<String>, val default: String)
 
 interface ApiService {
     @POST("api/auth/login") suspend fun login(@Body body: LoginRequest): LoginResponse
@@ -22,4 +25,6 @@ interface ApiService {
     @GET("api/servers") suspend fun listServers(): ServersResponse
     @POST("api/servers/{name}/test") suspend fun testServer(@Path("name") name: String): ConnectionTest
     @GET("api/quota") suspend fun getQuota(): QuotaResponse
+    @POST("api/providers/validate") suspend fun validateKey(@Body body: ValidateKeyRequest): ValidateKeyResponse
+    @GET("api/providers/list") suspend fun listProviders(): ProvidersListResponse
 }

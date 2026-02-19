@@ -10,6 +10,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.aissh.agent.R
 import com.aissh.agent.data.local.entity.ServerEntity
 
 @Composable
@@ -28,7 +30,7 @@ fun ServerCard(server: ServerEntity, onTest: () -> Unit) {
             FilledTonalButton(onClick = onTest, contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)) {
                 Icon(Icons.Default.NetworkCheck, null, modifier = Modifier.size(16.dp))
                 Spacer(Modifier.width(4.dp))
-                Text("Test", fontSize = 12.sp)
+                Text(stringResource(R.string.test), fontSize = 12.sp)
             }
         }
     }

@@ -52,7 +52,7 @@ async def register(body: RegisterRequest, db: AsyncSession = Depends(get_session
 @router.post("/chat")
 async def chat(body: ChatRequest, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_session)):
     from server import brain
-    result = await brain.chat(body.message, provider_name=body.provider, user_id=user.id)
+    result = await brain.chat(body.message, provider_name=body.provider, user_id=user.id, session_id=body.session_id)
     db.add(ChatHistory(user_id=user.id, session_id=body.session_id, role="user", content=body.message))
     db.add(ChatHistory(user_id=user.id, session_id=body.session_id, role="assistant",
         content=result["reply"], provider=result.get("provider"), model=result.get("model"),

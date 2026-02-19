@@ -45,14 +45,14 @@ class AIBrain:
         self.context = ContextManager()
         self.habits = HabitLearner()
 
-    async def chat(self, user_message: str, provider_name: str = None, user_id: int = None) -> dict:
+    async def chat(self, user_message: str, provider_name: str = None, user_id: int = None, session_id: str = "default") -> dict:
         provider_name = provider_name or self.default_provider
         provider = self.providers.get(provider_name)
         if not provider:
             return {"reply": f"Provider {provider_name} not available.", "tokens_in": 0, "tokens_out": 0, "cost": 0}
-        self.context.add_message("user", user_message)
-        system = SYSTEM_PROMPT.format(context=self.context.get_context_prompt(), habits=self.habits.get_habits_prompt())
-        messages = self.context.get_messages_for_api()
+        self.context.add_message(session_id, "user", user_message)
+        system = SYSTEM_PROMPT.format(context="", habits=self.habits.get_habits_prompt())
+        messages = self.context.get_messages(session_id)
         tools = TOOLS if provider_name != "gemini" else None
         total_in = 0
         total_out = 0
@@ -61,7 +61,7 @@ class AIBrain:
             total_in += resp.tokens_in
             total_out += resp.tokens_out
             if not resp.tool_calls:
-                self.context.add_message("assistant", resp.content)
+                self.context.add_message(session_id, "assistant", resp.content)
                 cost = provider.estimate_cost(total_in, total_out)
                 return {"reply": resp.content, "tokens_in": total_in, "tokens_out": total_out,
                         "cost": cost, "provider": provider_name, "model": resp.model}

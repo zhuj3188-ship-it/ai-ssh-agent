@@ -2,7 +2,6 @@ package com.aissh.agent.ui.screens
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,7 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.aissh.agent.R
-import com.aissh.agent.ui.components.*
+import com.aissh.agent.ui.components.MessageBubble
+import com.aissh.agent.ui.components.MessageShimmer
 import com.aissh.agent.viewmodel.ChatViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,6 +35,7 @@ fun ChatScreen(vm: ChatViewModel = hiltViewModel()) {
     var showHistory by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
     val cs = MaterialTheme.colorScheme
+    val allProviders = listOf("anthropic", "openai", "gemini", "deepseek", "zhipu", "nvidia", "ollama")
 
     LaunchedEffect(state.messages.size) {
         if (state.messages.isNotEmpty()) listState.animateScrollToItem(state.messages.size - 1)
@@ -42,8 +43,7 @@ fun ChatScreen(vm: ChatViewModel = hiltViewModel()) {
 
     // History drawer
     if (showHistory) {
-        ModalBottomSheet(onDismissRequest = { showHistory = false },
-            containerColor = cs.surfaceVariant) {
+        ModalBottomSheet(onDismissRequest = { showHistory = false }, containerColor = cs.surfaceVariant) {
             Column(Modifier.padding(16.dp)) {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically) {
@@ -67,24 +67,17 @@ fun ChatScreen(vm: ChatViewModel = hiltViewModel()) {
                 }
                 state.sessions.forEach { sid ->
                     val isActive = sid == state.currentSession
-                    Surface(
-                        onClick = { vm.loadSession(sid); showHistory = false },
+                    Surface(onClick = { vm.loadSession(sid); showHistory = false },
                         color = if (isActive) cs.primary.copy(alpha = 0.12f) else cs.surface,
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 3.dp)
-                    ) {
+                        shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth().padding(vertical = 3.dp)) {
                         Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                             Icon(Icons.Default.ChatBubbleOutline, null,
                                 tint = if (isActive) cs.primary else cs.onSurfaceVariant, modifier = Modifier.size(18.dp))
-                            Column(Modifier.weight(1f)) {
-                                Text(if (sid == "default") stringResource(R.string.default_chat) else sid.replace("chat_", "#"),
-                                    fontSize = 14.sp, color = if (isActive) cs.primary else cs.onSurface,
-                                    maxLines = 1, overflow = TextOverflow.Ellipsis)
-                            }
-                            if (isActive) {
-                                Box(Modifier.size(8.dp).clip(CircleShape).background(cs.primary))
-                            }
+                            Text(if (sid == "default") stringResource(R.string.default_chat) else sid.replace("chat_", "#"),
+                                fontSize = 14.sp, color = if (isActive) cs.primary else cs.onSurface,
+                                maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
+                            if (isActive) Box(Modifier.size(8.dp).clip(CircleShape).background(cs.primary))
                         }
                     }
                 }
@@ -103,15 +96,17 @@ fun ChatScreen(vm: ChatViewModel = hiltViewModel()) {
                 }
                 Text(stringResource(R.string.chat), fontSize = 17.sp, color = cs.onSurface,
                     modifier = Modifier.weight(1f).padding(start = 4.dp))
-                // Provider chip
                 Surface(onClick = { showProviders = !showProviders },
-                    color = cs.primary.copy(alpha = 0.1f), shape = RoundedCornerShape(16.dp)) {
+                    color = if (state.validProviders.contains(state.currentProvider))
+                        cs.primary.copy(alpha = 0.1f) else cs.error.copy(alpha = 0.1f),
+                    shape = RoundedCornerShape(16.dp)) {
                     Row(Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
                         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Icon(Icons.Default.SmartToy, null, tint = cs.primary, modifier = Modifier.size(14.dp))
-                        Text(state.currentProvider, fontSize = 11.sp, color = cs.primary)
-                        Icon(if (showProviders) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                            null, tint = cs.primary, modifier = Modifier.size(14.dp))
+                        Icon(Icons.Default.SmartToy, null,
+                            tint = if (state.validProviders.contains(state.currentProvider)) cs.primary else cs.error,
+                            modifier = Modifier.size(14.dp))
+                        Text(state.currentProvider, fontSize = 11.sp,
+                            color = if (state.validProviders.contains(state.currentProvider)) cs.primary else cs.error)
                     }
                 }
                 IconButton(onClick = { vm.clearCurrent() }, modifier = Modifier.size(36.dp)) {
@@ -120,20 +115,29 @@ fun ChatScreen(vm: ChatViewModel = hiltViewModel()) {
             }
         }
 
-        // Provider selector
+        // Provider selector - grey out unvalidated
         AnimatedVisibility(visible = showProviders, enter = expandVertically(), exit = shrinkVertically()) {
             Surface(color = cs.surfaceVariant, shadowElevation = 2.dp) {
                 Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
-                    listOf("anthropic", "openai", "gemini", "deepseek", "zhipu", "nvidia", "ollama").chunked(4).forEach { row ->
+                    allProviders.chunked(4).forEach { row ->
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                             row.forEach { p ->
-                                FilterChip(selected = state.currentProvider == p,
-                                    onClick = { vm.setProvider(p); showProviders = false },
+                                val isValid = state.validProviders.contains(p)
+                                FilterChip(
+                                    selected = state.currentProvider == p,
+                                    onClick = { if (isValid) { vm.setProvider(p); showProviders = false } },
+                                    enabled = isValid,
                                     label = { Text(p, fontSize = 11.sp) },
                                     modifier = Modifier.weight(1f),
+                                    leadingIcon = if (isValid) {{ Icon(Icons.Default.CheckCircle, null, Modifier.size(12.dp)) }} else null,
                                     colors = FilterChipDefaults.filterChipColors(
-                                        selectedContainerColor = cs.primary.copy(alpha = 0.15f), selectedLabelColor = cs.primary,
-                                        containerColor = cs.surface, labelColor = cs.onSurfaceVariant))
+                                        selectedContainerColor = cs.primary.copy(alpha = 0.15f),
+                                        selectedLabelColor = cs.primary,
+                                        containerColor = cs.surface,
+                                        labelColor = if (isValid) cs.onSurfaceVariant else cs.onSurfaceVariant.copy(alpha = 0.3f),
+                                        disabledContainerColor = cs.surface.copy(alpha = 0.5f),
+                                        disabledLabelColor = cs.onSurfaceVariant.copy(alpha = 0.3f))
+                                )
                             }
                             repeat(4 - row.size) { Spacer(Modifier.weight(1f)) }
                         }
@@ -179,8 +183,7 @@ fun ChatScreen(vm: ChatViewModel = hiltViewModel()) {
                     modifier = Modifier.weight(1f), maxLines = 3, shape = RoundedCornerShape(22.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = cs.primary, unfocusedBorderColor = cs.outline.copy(alpha = 0.2f),
-                        focusedTextColor = cs.onSurface, unfocusedTextColor = cs.onSurface,
-                        cursorColor = cs.primary,
+                        focusedTextColor = cs.onSurface, unfocusedTextColor = cs.onSurface, cursorColor = cs.primary,
                         focusedContainerColor = cs.surfaceVariant.copy(alpha = 0.5f),
                         unfocusedContainerColor = cs.surfaceVariant.copy(alpha = 0.3f)))
                 Spacer(Modifier.width(8.dp))

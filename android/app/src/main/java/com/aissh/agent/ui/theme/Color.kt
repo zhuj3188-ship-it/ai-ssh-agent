@@ -2,27 +2,29 @@ package com.aissh.agent.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Dark
-val Obsidian = Color(0xFF0A0A0F)
-val DeepCharcoal = Color(0xFF12121A)
-val SurfaceDark = Color(0xFF1A1A25)
-val CardDark = Color(0xFF222233)
-val Ivory = Color(0xFFF0F0F5)
-val SoftWhite = Color(0xFFE0E0EA)
-val MutedGray = Color(0xFF8888AA)
+// Dark theme
+val DarkBg = Color(0xFF0A0E14)
+val DarkSurface = Color(0xFF111620)
+val DarkCard = Color(0xFF1A2030)
+val DarkText = Color(0xFFE8EDF5)
+val DarkTextSec = Color(0xFF8892A4)
+val DarkBorder = Color(0xFF2A3444)
 
-// Light
-val LightBg = Color(0xFFF5F6FA)
+// Light theme
+val LightBg = Color(0xFFF2F5FA)
 val LightSurface = Color(0xFFFFFFFF)
-val LightCard = Color(0xFFF0F1F5)
-val LightText = Color(0xFF1A1A2E)
-val LightTextSec = Color(0xFF6B7280)
+val LightCard = Color(0xFFF0F2F8)
+val LightText = Color(0xFF0F1624)
+val LightTextSec = Color(0xFF5C6878)
+val LightBorder = Color(0xFFDDE2EA)
 
 // Accent
-val CyanPrimary = Color(0xFF6C5CE7)
-val CyanGlow = Color(0xFF00B4D8)
-val CyanDim = Color(0xFF5A4BD1)
-val EmeraldPrimary = Color(0xFF00E676)
-val EmeraldGlow = Color(0xFF00C853)
-val DangerRed = Color(0xFFFF5252)
-val WarningAmber = Color(0xFFFFAB00)
+val AccentBlue = Color(0xFF3B82F6)
+val AccentBlueDark = Color(0xFF2563EB)
+val AccentBlueGlow = Color(0xFF60A5FA)
+val AccentGreen = Color(0xFF10B981)
+val AccentGreenGlow = Color(0xFF34D399)
+val AccentRed = Color(0xFFEF4444)
+val AccentRedGlow = Color(0xFFF87171)
+val AccentAmber = Color(0xFFF59E0B)
+val AccentCyan = Color(0xFF06B6D4)

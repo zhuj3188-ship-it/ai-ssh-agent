@@ -18,9 +18,6 @@ interface MessageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(message: MessageEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(messages: List<MessageEntity>)
-
     @Query("DELETE FROM messages WHERE sessionId = :sessionId")
     suspend fun deleteSession(sessionId: String)
 

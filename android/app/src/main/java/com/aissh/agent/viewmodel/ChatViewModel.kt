@@ -20,7 +20,8 @@ data class ChatState(
     val lastProvider: String = "",
     val lastModel: String = "",
     val lastCost: Double = 0.0,
-    val currentProvider: String = "anthropic"
+    val currentProvider: String = "anthropic",
+    val validProviders: Set<String> = emptySet()
 )
 
 @HiltViewModel
@@ -32,6 +33,8 @@ class ChatViewModel @Inject constructor(
     val state = _state.asStateFlow()
     private var messageJob: Job? = null
 
+    private val allProviders = listOf("anthropic", "openai", "gemini", "deepseek", "zhipu", "nvidia", "ollama")
+
     init {
         loadSession("default")
         viewModelScope.launch {
@@ -39,6 +42,17 @@ class ChatViewModel @Inject constructor(
         }
         viewModelScope.launch {
             settingsRepo.provider.collect { p -> _state.update { it.copy(currentProvider = p) } }
+        }
+        allProviders.forEach { p ->
+            viewModelScope.launch {
+                settingsRepo.apiValidFlow(p).collect { valid ->
+                    _state.update { st ->
+                        val set = st.validProviders.toMutableSet()
+                        if (valid) set.add(p) else set.remove(p)
+                        st.copy(validProviders = set)
+                    }
+                }
+            }
         }
     }
 
