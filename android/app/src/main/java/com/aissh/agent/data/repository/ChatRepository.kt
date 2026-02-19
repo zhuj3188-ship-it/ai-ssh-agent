@@ -12,8 +12,9 @@ import javax.inject.Singleton
 @Singleton
 class ChatRepository @Inject constructor(private val api: ApiService, private val messageDao: MessageDao) {
     fun getMessages(sessionId: String): Flow<List<MessageEntity>> = messageDao.getBySession(sessionId)
+    fun getAllSessions(): Flow<List<String>> = messageDao.getAllSessions()
 
-    suspend fun sendMessage(text: String, sessionId: String = "default", provider: String? = null): ChatResponse {
+    suspend fun sendMessage(text: String, provider: String? = null, sessionId: String = "default"): ChatResponse {
         messageDao.insert(MessageEntity(sessionId = sessionId, role = "user", content = text))
         val resp = api.chat(ChatRequest(message = text, provider = provider, session_id = sessionId))
         messageDao.insert(MessageEntity(sessionId = sessionId, role = "assistant", content = resp.reply,

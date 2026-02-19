@@ -12,6 +12,8 @@ import javax.inject.Inject
 
 data class ChatState(
     val messages: List<MessageEntity> = emptyList(),
+    val sessions: List<String> = emptyList(),
+    val currentSession: String = "default",
     val isLoading: Boolean = false,
     val error: String? = null,
     val lastProvider: String = "",
@@ -29,9 +31,10 @@ class ChatViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     init {
+        loadSession("default")
         viewModelScope.launch {
-            chatRepo.getMessages("default").collect { msgs ->
-                _state.update { it.copy(messages = msgs) }
+            chatRepo.getAllSessions().collect { sessions ->
+                _state.update { it.copy(sessions = sessions) }
             }
         }
         viewModelScope.launch {
@@ -39,6 +42,20 @@ class ChatViewModel @Inject constructor(
                 _state.update { it.copy(currentProvider = p) }
             }
         }
+    }
+
+    fun loadSession(sessionId: String) {
+        _state.update { it.copy(currentSession = sessionId) }
+        viewModelScope.launch {
+            chatRepo.getMessages(sessionId).collect { msgs ->
+                _state.update { it.copy(messages = msgs) }
+            }
+        }
+    }
+
+    fun newSession() {
+        val id = "chat_" + System.currentTimeMillis()
+        loadSession(id)
     }
 
     fun setProvider(p: String) {
@@ -50,12 +67,20 @@ class ChatViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
             try {
-                val result = chatRepo.sendMessage(message, _state.value.currentProvider, "default")
+                val result = chatRepo.sendMessage(message, _state.value.currentProvider, _state.value.currentSession)
                 _state.update { it.copy(isLoading = false,
                     lastProvider = result.provider, lastModel = result.model, lastCost = result.cost) }
             } catch (e: Exception) {
                 _state.update { it.copy(isLoading = false, error = e.message) }
             }
         }
+    }
+
+    fun clearCurrent() {
+        viewModelScope.launch { chatRepo.clearSession(_state.value.currentSession) }
+    }
+
+    fun clearAll() {
+        viewModelScope.launch { chatRepo.clearAll() }
     }
 }

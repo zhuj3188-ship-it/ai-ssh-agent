@@ -18,4 +18,16 @@
     <string name="ai_provider">AI Provider</string>
     <string name="api_key">API Key</string>
     <string name="api_key_hint">Enter your API key</string>
+    <string name="chat_history">Chat History</string>
+    <string name="new_chat">New Chat</string>
+    <string name="no_history">No chat history</string>
+    <string name="default_chat">Default Chat</string>
+    <string name="total_tokens">Total Tokens</string>
+    <string name="total_cost">Total Cost</string>
+    <string name="tokens_in">Tokens In</string>
+    <string name="tokens_out">Tokens Out</string>
+    <string name="cost">Cost</string>
+    <string name="no_quota">No usage data yet</string>
+    <string name="test">Test</string>
+    <string name="no_servers">No servers configured</string>
 </resources>

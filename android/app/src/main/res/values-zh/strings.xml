@@ -18,4 +18,16 @@
     <string name="ai_provider">AI 服务商</string>
     <string name="api_key">API 密钥</string>
     <string name="api_key_hint">输入你的 API 密钥</string>
+    <string name="chat_history">聊天历史</string>
+    <string name="new_chat">新建聊天</string>
+    <string name="no_history">暂无聊天记录</string>
+    <string name="default_chat">默认聊天</string>
+    <string name="total_tokens">总 Token 数</string>
+    <string name="total_cost">总费用</string>
+    <string name="tokens_in">输入 Token</string>
+    <string name="tokens_out">输出 Token</string>
+    <string name="cost">费用</string>
+    <string name="no_quota">暂无使用数据</string>
+    <string name="test">测试</string>
+    <string name="no_servers">未配置服务器</string>
 </resources>
