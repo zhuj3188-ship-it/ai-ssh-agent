@@ -1,18 +1,29 @@
 package com.aissh.agent.data.local.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.aissh.agent.data.local.entity.MessageEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MessageDao {
-    @Query("SELECT * FROM messages WHERE sessionId = :sid ORDER BY timestamp ASC")
-    fun getBySession(sid: String): Flow<List<MessageEntity>>
+    @Query("SELECT * FROM messages WHERE sessionId = :sessionId ORDER BY timestamp ASC")
+    fun getMessages(sessionId: String): Flow<List<MessageEntity>>
 
-    @Query("SELECT DISTINCT sessionId FROM messages ORDER BY MAX(timestamp) DESC")
+    @Query("SELECT DISTINCT sessionId FROM messages ORDER BY timestamp DESC")
     fun getAllSessions(): Flow<List<String>>
 
-    @Insert suspend fun insert(msg: MessageEntity)
-    @Query("DELETE FROM messages WHERE sessionId = :sid") suspend fun clearSession(sid: String)
-    @Query("DELETE FROM messages") suspend fun clearAll()
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(message: MessageEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(messages: List<MessageEntity>)
+
+    @Query("DELETE FROM messages WHERE sessionId = :sessionId")
+    suspend fun deleteSession(sessionId: String)
+
+    @Query("DELETE FROM messages")
+    suspend fun clearAll()
 }
